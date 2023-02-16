@@ -21,7 +21,9 @@ module.exports = (sequelize) => {
         "experiencia",
         "reseñas",
         "dashboard",
-        "detalle proyecto"
+        "detalle proyecto",
+        "seccion extra uno",
+        "seccion extra dos"
       )
     },
   },{
