@@ -1,5 +1,5 @@
 const express = require('express');
-const { getAllImages, postImages } = require('../../controllers/ImagesControllers/imagesControllers');
+const { getAllImages, postImages, getImageForName } = require('../../controllers/ImagesControllers/imagesControllers');
 const router = express.Router();
 
 
@@ -16,6 +16,20 @@ router.get("/", async (req, res)=>{
     } catch (error) {
         console.log('llega');
         res.status(404).send(JSON.parse(error.message));
+    }
+})
+
+router.get("/name", async (req, res)=>{
+    try {
+        let image = await getImageForName(req.query.name);
+
+        if (image.containsError) {
+            throw new Error(image)
+        }
+        
+        res.send(image);
+    } catch (error) {
+        res.status(404).send(error);
     }
 })
 

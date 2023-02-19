@@ -22,7 +22,15 @@ module.exports = {
         return {info: imageCreated, containErrors: false, message: "La imagen se creo con exito!"}
     },
     getAllImages: async function(){
-        let allImages = await Images.findAll();
+        let allImages = await Images.findAll({
+            include: {
+                model: Sections,
+                attributes: ["name"],
+                through: {
+                    attributes: []
+                }
+            }
+        });
 
         if (!allImages) {
             throw new Error(JSON.stringify({containErrors: true, message: "No hay ninguna imagen!"}))
@@ -30,16 +38,22 @@ module.exports = {
 
         return {info: allImages, message: "Se obtuvieron las secciones correctamente.", containsError: false};
     },
-    getSectionForName: async function(body) {
-        const {name} = body;
-        let allSections = await Sections.findAll({
-            where: {name}
+    getImageForName: async function(name) {
+        let section = await Images.findOne({
+            where: {name: name},
+            include: {
+                model: Sections,
+                attributes: ["name"],
+                through: {
+                    attributes: []
+                }
+            }
         });
 
-        if (!allSections) {
-            return {containsError: true, message: "No hay ninguna sección activa con el nombre " + name + "."}
+        if (!section) {
+            return {containsError: true, message: "No hay ninguna imagen activa con el nombre " + name + "."}
         }
 
-        return {info: allSections, message: "Se obtuvo las seccion " + name + "correctamente.", containsError: false};
+        return {info: section, message: "Se obtuvo la imagen " + name + "correctamente.", containsError: false};
     }
 }
