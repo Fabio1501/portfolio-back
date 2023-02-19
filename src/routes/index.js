@@ -5,6 +5,7 @@ const { Router } = require('express');
 // const routeRecipes = require("./recipes")
 const routeSections = require("./sections/sectionsRoute");
 const routeImages = require("./images/imagesRoute");
+const routeTexts = require("./texts/textsRoute");
 
 const router = Router();
 
@@ -14,5 +15,6 @@ const router = Router();
 // router.use("/diets", routeDiets);
 router.use("/sections", routeSections)
 router.use("/images", routeImages)
+router.use("/texts", routeTexts)
 
 module.exports = router;
