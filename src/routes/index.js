@@ -6,6 +6,7 @@ const { Router } = require('express');
 const routeSections = require("./sections/sectionsRoute");
 const routeImages = require("./images/imagesRoute");
 const routeTexts = require("./texts/textsRoute");
+const routeUrls = require("./urls/urlsRoute");
 
 const router = Router();
 
@@ -16,5 +17,6 @@ const router = Router();
 router.use("/sections", routeSections)
 router.use("/images", routeImages)
 router.use("/texts", routeTexts)
+router.use("/urls", routeUrls)
 
 module.exports = router;
