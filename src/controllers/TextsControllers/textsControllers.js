@@ -20,11 +20,11 @@ module.exports = {
             let sectionsDb = await Sections.findAll({where: {name: sections}})
             const newText = await textCreated.addSections(sectionsDb);
             
-            throw new Error(JSON.stringify({
+            return {
                 info: newText, 
                 containErrors: false, 
                 message: "El texto se creo con exito!"
-            }))
+            }
         }
 
         return {info: textCreated, containErrors: false, message: "El texto se creo con exito!"}
@@ -59,9 +59,29 @@ module.exports = {
         });
 
         if (!text) {
-            return {containsError: true, message: "No hay ningun texto activo con el nombre " + name + "."}
+            throw new Error(JSON.stringify({containsError: true, message: "No hay ningun texto activo con el nombre " + name + "."}))
         }
 
         return {info: text, message: "Se obtuvo el texto " + name + "correctamente.", containsError: false};
+    },
+    updateText: async function(id, body) {
+        const {content, type, name} = body;
+        const textId = await Texts.findByPk(id)
+
+        if (!textId) {
+            throw new Error(JSON.stringify({containErrors: true, message: "El ID especificado no existe"}))
+        }
+
+        await Texts.update({
+            content: content ? content : textId.content,
+            type: type ? type : textId.type,
+            name: name ? name : textId.name,
+        },{
+            where: {
+                id: id
+            }
+        });
+
+        return {containErrors: false, message: `El texto '${textId.name}' se modificó correctamente.`}
     }
 }
