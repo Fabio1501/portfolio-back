@@ -11,12 +11,10 @@ module.exports = {
         let imageCreated = await Images.create(body);
 
         if (sections) {
-            // console.log(sectionCreated);
             let sectionsDb = await Sections.findAll({where: {name: sections}})
-            // console.log(imagesDb + 'llego hasta acà!!!!');
             const newImage = await imageCreated.addSections(sectionsDb);
-            // console.log(newSection);
-            throw new Error(JSON.stringify({info: newImage, containErrors: false, message: "La imagen se creo con exito!"}))
+
+            return{info: newImage, containErrors: false, message: "La imagen se creo con exito!"}
         }
 
         return {info: imageCreated, containErrors: false, message: "La imagen se creo con exito!"}
@@ -51,9 +49,29 @@ module.exports = {
         });
 
         if (!section) {
-            return {containsError: true, message: "No hay ninguna imagen activa con el nombre " + name + "."}
+            throw new Error(JSON.stringify({containsError: true, message: "No hay ninguna imagen activa con el nombre " + name + "."}))
         }
 
         return {info: section, message: "Se obtuvo la imagen " + name + "correctamente.", containsError: false};
+    },
+    updateImages: async function(id, body) {
+        const {alt, src, name} = body;
+        const imagesId = await Images.findByPk(id)
+
+        if (!imagesId) {
+            throw new Error(JSON.stringify({containErrors: true, message: "El ID especificado no existe"}))
+        }
+
+        await Images.update({
+            alt: alt ? alt : imagesId.alt,
+            src: src ? src : imagesId.src,
+            name: name ? name : imagesId.name,
+        },{
+            where: {
+                id: id
+            }
+        });
+
+        return {containErrors: false, message: `La imagen '${imagesId.name}' se modificó correctamente.`}
     }
 }
