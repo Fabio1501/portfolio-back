@@ -1,5 +1,5 @@
 const express = require('express');
-const { getAllTexts, postTexts, getTextForName } = require('../../controllers/TextsControllers/textsControllers');
+const { getAllTexts, postTexts, getTextForName, updateText } = require('../../controllers/TextsControllers/textsControllers');
 const router = express.Router();
 
 
@@ -21,14 +21,10 @@ router.get("/", async (req, res)=>{
 router.get("/name", async (req, res)=>{
     try {
         let text = await getTextForName(req.query.name);
-
-        if (text.containsError) {
-            throw new Error(text)
-        }
         
         res.send(text);
     } catch (error) {
-        res.status(404).send(error);
+        res.status(404).send(JSON.parse(error.message));
     }
 })
 
@@ -41,6 +37,16 @@ router.post("/create", async (req, res)=>{
         }
         
         res.send(newText);
+    } catch (error) {
+        res.status(404).send(JSON.parse(error.message));
+    }
+})
+
+router.put("/:id", async (req, res)=>{
+    try {
+        let text = await updateText(req.params.id, req.body);
+        
+        res.send(text);
     } catch (error) {
         res.status(404).send(JSON.parse(error.message));
     }

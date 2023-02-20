@@ -1,5 +1,5 @@
 const express = require('express');
-const { getAllImages, postImages, getImageForName } = require('../../controllers/ImagesControllers/imagesControllers');
+const { getAllImages, postImages, getImageForName, updateImages } = require('../../controllers/ImagesControllers/imagesControllers');
 const router = express.Router();
 
 
@@ -29,7 +29,7 @@ router.get("/name", async (req, res)=>{
         
         res.send(image);
     } catch (error) {
-        res.status(404).send(error);
+        res.status(404).send(JSON.parse(error.message));
     }
 })
 
@@ -43,6 +43,16 @@ router.post("/create", async (req, res)=>{
         }
         
         res.send(newImage);
+    } catch (error) {
+        res.status(404).send(JSON.parse(error.message));
+    }
+})
+
+router.put("/:id", async (req, res)=>{
+    try {
+        let images = await updateImages(req.params.id, req.body);
+        
+        res.send(images);
     } catch (error) {
         res.status(404).send(JSON.parse(error.message));
     }
