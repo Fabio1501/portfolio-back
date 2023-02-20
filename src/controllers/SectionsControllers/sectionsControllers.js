@@ -10,9 +10,6 @@ module.exports = {
         
         if(sectionInDb !== null) {
             throw new Error(JSON.stringify({containErrors: true, message: "Ya existe la seccion"}))
-            // let imagesDb = await Images.findAll({where: {name: images}})
-            // let newSection = await sectionInDb.addImages(imagesDb);
-            // return {info: {...newSection, ...sectionInDb}, containErrors: false, message: "La seccion se creo con exito!"}   
         }
         
         if(!name || !images) throw new Error(JSON.stringify({containErrors: true, message: "Faltan datos requeridos!"}))
@@ -39,9 +36,9 @@ module.exports = {
                 }
             }
         });
-        console.log('llega hasta acá?');
+
         if (!allSections) {
-            return {containsError: true, message: "No hay ninguna seccion activa."}
+            throw new Error(JSON.stringify({containsError: true, message: "No hay ninguna seccion activa."})) 
         }
 
         return {info: allSections, message: "Se obtuvieron las secciones correctamente.", containsError: false};
@@ -62,7 +59,7 @@ module.exports = {
         });
 
         if (!section) {
-            return {containsError: true, message: "No hay ninguna seccion con ese nombre."}
+            throw new Error(JSON.stringify({containsError: true, message: "No hay ninguna seccion con ese nombre."}))
         }
 
         let imagesDb = await Images.findAll({where: {name: content}})
@@ -79,7 +76,7 @@ module.exports = {
         });
 
         if (sectionAdd.Images.length > section.Images.length) {
-            return {info: sectionAdd, containErrors: false, message: "Los items se agregaron correctamente!"}  
+            throw new Error(JSON.stringify({info: sectionAdd, containErrors: false, message: "Los items se agregaron correctamente!"}))   
         }
 
         return {info: sectionAdd, containErrors: true, message: "Los items no se agregaron!"}  
@@ -97,9 +94,9 @@ module.exports = {
         });
 
         if (!section) {
-            return {containsError: true, message: "No hay ninguna sección activa con el nombre " + name + "."}
+            throw new Error(JSON.stringify({containsError: true, message: "No hay ninguna sección activa con el nombre " + name + "."}))
         }
-console.log({message: "Se obtuvo la seccion " + name + "correctamente."});
+
         return {info: section, message: "Se obtuvo la seccion " + name + "correctamente.", containsError: false};
     }
 }
