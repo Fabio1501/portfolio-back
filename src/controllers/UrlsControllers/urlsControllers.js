@@ -29,11 +29,33 @@ module.exports = {
 
         return {info: urlCreated, containErrors: false, message: "La url se creo con exito!"}
     },
+    postManyUrls: async function(body){
+        if (Array.isArray(body)) {
+            for (const url of body) {
+                const {href, name} = url;
+                
+                if(!href || !name) {
+                    throw new Error(JSON.stringify({
+                        containErrors: true, 
+                        message: "Faltan datos requeridos!"
+                    }))
+                }
+
+                let urlInDb = await Urls.findOne({where: {name}});
+                if(urlInDb) throw new Error(JSON.stringify({containErrors: true, message: "Ya existe la URL " + name}))
+            }
+            
+        }
+        let urlsCreated = await Urls.bulkCreate(body);
+
+        return {info: urlsCreated, containErrors: false, message: "Las urls se crearon con exito!"}
+    }
+    ,
     getAllUrls: async function(){
         let allUrls = await Urls.findAll({
             include: {
                 model: Sections,
-                attributes: ["name"],
+                attributes: ["target", "href", "name"],
                 through: {
                     attributes: []
                 }
@@ -51,7 +73,7 @@ module.exports = {
             where: {name: name},
             include: {
                 model: Sections,
-                attributes: ["name"],
+                attributes: ["name", "target", "href"],
                 through: {
                     attributes: []
                 }
@@ -65,7 +87,7 @@ module.exports = {
         return {info: url, message: "Se obtuvo la url " + name + " correctamente.", containsError: false};
     },
     updateUrls: async function(id, body) {
-        const {href, name} = body;
+        const {target, href, name} = body;
         const urlsId = await Urls.findByPk(id)
 
         if (!urlsId) {
@@ -75,6 +97,7 @@ module.exports = {
         await Urls.update({
             href: href ? href : urlsId.href,
             name: name ? name : urlsId.name,
+            target: target ? target : urlsId.target,
         },{
             where: {
                 id: id

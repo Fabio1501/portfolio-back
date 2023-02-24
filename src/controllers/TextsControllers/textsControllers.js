@@ -29,6 +29,27 @@ module.exports = {
 
         return {info: textCreated, containErrors: false, message: "El texto se creo con exito!"}
     },
+    postManyTexts: async function(body){
+        if (Array.isArray(body)) {
+            for (const text of body) {
+                const {content, name} = text;
+                
+                if(!content || !name) {
+                    throw new Error(JSON.stringify({
+                        containErrors: true, 
+                        message: "Faltan datos requeridos!"
+                    }))
+                }
+
+                let textInDb = await Texts.findOne({where: {name}});
+                if(textInDb) throw new Error(JSON.stringify({containErrors: true, message: "Ya existe el texto " + name}))
+            }
+            
+        }
+        let urlsCreated = await Texts.bulkCreate(body);
+
+        return {info: urlsCreated, containErrors: false, message: "Los textos se crearon con exito!"}
+    },
     getAllTexts: async function(){
         let allTexts = await Texts.findAll({
             include: {

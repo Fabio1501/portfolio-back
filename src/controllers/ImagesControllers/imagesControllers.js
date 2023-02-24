@@ -2,13 +2,13 @@ const {TypeOfSection, Sections, Images} = require('../../db');
 
 module.exports = {
     postImages: async function(body){
-        const {alt, src, name, sections} = body;
+        const {src, name, type, sections} = body;
         let ImageInDb = await Images.findOne({where: {name}})
         
-        if(ImageInDb) throw new Error({containErrors: true, message: "Ya existe la seccion"})
+        if(ImageInDb && ImageInDb.type === type) throw new Error({containErrors: true, message: "Ya existe la seccion"})
 
-        if(!alt || !src || !name) throw new Error(JSON.stringify({containErrors: true, message: "Faltan datos requeridos!"}))
-        let imageCreated = await Images.create(body);
+        if(!src || !name) throw new Error(JSON.stringify({containErrors: true, message: "Faltan datos requeridos!"}))
+        let imageCreated = await Images.create({...body, alt: `${name}${type}`});
 
         if (sections) {
             let sectionsDb = await Sections.findAll({where: {name: sections}})
@@ -18,6 +18,28 @@ module.exports = {
         }
 
         return {info: imageCreated, containErrors: false, message: "La imagen se creo con exito!"}
+    },
+    postManyImages: async function(body){
+        let imagesCreated = []
+        if (Array.isArray(body)) {
+            for (const image of body) {
+                const {src, type, name} = image;
+                
+                if(!src || !name) {
+                    throw new Error(JSON.stringify({
+                        containErrors: true, 
+                        message: "Faltan datos requeridos!"
+                    }))
+                }
+
+                let imageInDb = await Images.findOne({where: {name}});
+                if(imageInDb) throw new Error(JSON.stringify({containErrors: true, message: "Ya existe la imagen " + name}))
+                let imageCreated = await Images.create({...image, alt: `${name}${type}`});
+                imagesCreated.push(imageCreated)
+            }
+            
+        }
+        return {info: imagesCreated, containErrors: false, message: "Las imagenes se crearon con exito!"}
     },
     getAllImages: async function(){
         let allImages = await Images.findAll({
