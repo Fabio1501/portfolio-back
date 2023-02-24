@@ -5,28 +5,20 @@ const router = express.Router();
 router.get("/", async (req, res)=>{
     try {
         let allSections = await getAllSections();
-        console.log(allSections);
-        if (allSections.containsError) {
-            throw new Error(allSections)
-        }
         
         res.send(allSections);
     } catch (error) {
-        res.status(404).send(error);
+        res.status(404).send(JSON.parse(error.message));
     }
 })
 
 router.get("/name", async (req, res)=>{
     try {
         let section = await getSectionForName(req.query.name);
-
-        if (section.containsError) {
-            throw new Error(section)
-        }
         
         res.send(section);
     } catch (error) {
-        res.status(404).send(error);
+        res.status(404).send(JSON.parse(error.message));
     }
 })
 
