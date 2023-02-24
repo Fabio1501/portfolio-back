@@ -21,6 +21,10 @@ module.exports = (sequelize) => {
     href: {
         type: DataTypes.STRING,
         allowNull: false
+    },
+    target: {
+        type: DataTypes.STRING,
+        allowNull: true
     }
   },{
     timestamps: false
