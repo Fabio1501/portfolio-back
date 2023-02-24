@@ -1,5 +1,5 @@
 const express = require('express');
-const { getAllTexts, postTexts, getTextForName, updateText } = require('../../controllers/TextsControllers/textsControllers');
+const { getAllTexts, postTexts,postManyTexts, getTextForName, updateText } = require('../../controllers/TextsControllers/textsControllers');
 const router = express.Router();
 
 
@@ -37,6 +37,16 @@ router.post("/create", async (req, res)=>{
         }
         
         res.send(newText);
+    } catch (error) {
+        res.status(404).send(JSON.parse(error.message));
+    }
+})
+
+router.post("/createmany", async (req, res)=>{
+    try {
+        let newTexts = await postManyTexts(req.body);
+
+        res.send(newTexts);
     } catch (error) {
         res.status(404).send(JSON.parse(error.message));
     }

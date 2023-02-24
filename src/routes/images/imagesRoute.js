@@ -1,5 +1,5 @@
 const express = require('express');
-const { getAllImages, postImages, getImageForName, updateImages } = require('../../controllers/ImagesControllers/imagesControllers');
+const { getAllImages,postManyImages, postImages, getImageForName, updateImages } = require('../../controllers/ImagesControllers/imagesControllers');
 const router = express.Router();
 
 
@@ -43,6 +43,16 @@ router.post("/create", async (req, res)=>{
         }
         
         res.send(newImage);
+    } catch (error) {
+        res.status(404).send(JSON.parse(error.message));
+    }
+})
+
+router.post("/createmany", async (req, res)=>{
+    try {
+        let newImages = await postManyImages(req.body);
+
+        res.send(newImages);
     } catch (error) {
         res.status(404).send(JSON.parse(error.message));
     }

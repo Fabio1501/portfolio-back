@@ -1,5 +1,5 @@
 const express = require('express');
-const { getAllUrls, postUrls, getUrlForName, updateUrls } = require('../../controllers/UrlsControllers/urlsControllers');
+const { getAllUrls, postUrls, getUrlForName,postManyUrls, updateUrls } = require('../../controllers/UrlsControllers/urlsControllers');
 const router = express.Router();
 
 
@@ -33,6 +33,15 @@ router.post("/create", async (req, res)=>{
     }
 })
 
+router.post("/createmany", async (req, res)=>{
+    try {
+        let newUrls = await postManyUrls(req.body);
+
+        res.send(newUrls);
+    } catch (error) {
+        res.status(404).send(JSON.parse(error.message));
+    }
+})
 
 router.put("/:id", async (req, res)=>{
     try {
