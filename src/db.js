@@ -44,6 +44,12 @@ Sections.belongsToMany(Texts, {through: 'section_text'})
 Texts.belongsToMany(Sections, {through: 'section_text'})
 Sections.belongsToMany(Urls, {through: 'section_url'})
 Urls.belongsToMany(Sections, {through: 'section_url'})
+Sections.belongsToMany(Sections, {
+    as : 'staticComponents',
+    through: 'sections_staticComponents',
+    foreignKey: 'sectionId',
+    otherKey: 'componentId'
+})
 
 module.exports = {
   ...sequelize.models, // para poder importar los modelos así: const { Product, User } = require('./db.js');
