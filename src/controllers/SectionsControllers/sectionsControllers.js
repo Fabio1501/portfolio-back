@@ -2,7 +2,7 @@ const {TypeOfSection, Sections, Images, Urls, Texts} = require('../../db');
 
 module.exports = {
     postSections: async function(body){
-        const {name, images, texts, urls} = body;
+        const {name, images, texts, urls, staticComponents} = body;
         
         if(!name) throw new Error(JSON.stringify({containErrors: true, message: "Faltan datos requeridos!"}))
 
@@ -52,6 +52,11 @@ module.exports = {
             let textsDb = await Texts.findAll({where: {name: texts}})
             await sectionCreated.addTexts(textsDb);
         }
+
+        if (staticComponents) {
+            let staticComponentsDb = await Sections.findAll({where: {name: staticComponents}})
+            await sectionCreated.addStaticComponents(staticComponentsDb);
+        }
         
         return {info: sectionCreated, containErrors: false, message: "La seccion se creo con exito!"}
     },
@@ -60,24 +65,54 @@ module.exports = {
             include: [
                 {
                     model: Images,
-                    attributes: ["src", "alt", "id", "name"],
+                    attributes: ["type", "src", "alt", "id", "name"],
                     through: {
                         attributes: []
                     }
                 },
                 {
                     model: Urls,
-                    attributes: ["href", "target", "id", "name"],
+                    attributes: ["type", "href", "target", "id", "name"],
                     through: {
                         attributes: []
                     }
                 },
                 {
                     model: Texts,
-                    attributes: ["content", "id", "name"],
+                    attributes: ["type", "content", "id", "name"],
                     through: {
                         attributes: []
                     }
+                },
+                {
+                    model: Sections,
+                    as: "staticComponents",
+                    through: {
+                        attributes: []
+                    },
+                    include : [
+                        {
+                            model: Images,
+                            attributes: ["src", "alt", "id", "name"],
+                            through: {
+                                attributes: []
+                            }
+                        },
+                        {
+                            model: Urls,
+                            attributes: ["href", "target", "id", "name"],
+                            through: {
+                                attributes: []
+                            }
+                        },
+                        {
+                            model: Texts,
+                            attributes: ["content", "id", "name"],
+                            through: {
+                                attributes: []
+                            }
+                        }
+                    ]
                 }
             ]
         });
@@ -138,24 +173,54 @@ module.exports = {
             include: [
                 {
                     model: Images,
-                    attributes: ["type","src", "alt", "id", "name"],
+                    attributes: ["type", "src", "alt", "id", "name"],
                     through: {
                         attributes: []
                     }
                 },
                 {
                     model: Urls,
-                    attributes: ["type","target", "href", "id", "name"],
+                    attributes: ["type", "href", "target", "id", "name"],
                     through: {
                         attributes: []
                     }
                 },
                 {
                     model: Texts,
-                    attributes: ["type","content", "id", "name"],
+                    attributes: ["type", "content", "id", "name"],
                     through: {
                         attributes: []
                     }
+                },
+                {
+                    model: Sections,
+                    as: "staticComponents",
+                    through: {
+                        attributes: []
+                    },
+                    include : [
+                        {
+                            model: Images,
+                            attributes: ["src", "alt", "id", "name"],
+                            through: {
+                                attributes: []
+                            }
+                        },
+                        {
+                            model: Urls,
+                            attributes: ["href", "target", "id", "name"],
+                            through: {
+                                attributes: []
+                            }
+                        },
+                        {
+                            model: Texts,
+                            attributes: ["content", "id", "name"],
+                            through: {
+                                attributes: []
+                            }
+                        }
+                    ]
                 }
             ]
         });
