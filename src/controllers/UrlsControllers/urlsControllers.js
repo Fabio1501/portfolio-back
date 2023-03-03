@@ -55,7 +55,7 @@ module.exports = {
         let allUrls = await Urls.findAll({
             include: {
                 model: Sections,
-                attributes: ["target", "href", "name"],
+                attributes: ["name"],
                 through: {
                     attributes: []
                 }
@@ -73,7 +73,7 @@ module.exports = {
             where: {name: name},
             include: {
                 model: Sections,
-                attributes: ["name", "target", "href"],
+                attributes: ["href"],
                 through: {
                     attributes: []
                 }
